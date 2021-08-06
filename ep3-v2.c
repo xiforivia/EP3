@@ -135,8 +135,8 @@ void reta(Imagem * imagem, Ponto2D p1, Ponto2D p2, int cor){
 	x = p1.x;
 	y = p1.y;
 
-	p = 2*dy - dx;	
-
+	if(dx == 0 || dy == 0)
+	{
 	if(abs(dx)>abs(dy))
 		step = abs(dx);
 	else
@@ -151,7 +151,10 @@ void reta(Imagem * imagem, Ponto2D p1, Ponto2D p2, int cor){
 		p1.x = p1.x + xinc;
 		p1.y = p1.y + yinc;
 	}
-
+	}
+	else
+	{
+	p = 2*dy - dx;	
 	while(x < p2.x) {
 		
 		if(p >= 0) {
@@ -164,6 +167,7 @@ void reta(Imagem * imagem, Ponto2D p1, Ponto2D p2, int cor){
 			p = p + 2*dy;
 		}
 		x = x+1;
+	}
 	}
 
 }
@@ -272,7 +276,9 @@ int main(){
 				scanf("%d %d %d %d %d",&p1.x,&p1.y,&p2.x,&p2.y,&cor);
 				retangulo_contorno(img, p1, p2, cor);
 		} else if(strcmp(operacao,"RETANGULO_PREENCHIDO") == 0) {
-
+			int cor;
+			scanf("%d %d %d %d %d",&p1.x,&p1.y,&p2.x,&p2.y,&cor);
+			retangulo_preenchido(img, p1, p2, cor);
 		}
 	}
  
