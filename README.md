@@ -1,9 +1,7 @@
 # EP3
 
-Introdução à Programação - 1.o semestre de 2021
-Terceiro Exercício Programa
 Desenho de primitivas gráficas
-Introdução
+
 Neste EP3 vocês devem implementar o desenho de algumas primitivas gráficas e funções
 de desenho, além de completar o esqueleto do programa fornecido que gera imagens a
 partir de uma sequência de comandos fornecidos ao programa. O objetivo deste EP é
