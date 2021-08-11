@@ -52,17 +52,20 @@ Imagem * cria_imagem(int largura, int altura){
 
 	Imagem * imagem = (Imagem *) malloc(sizeof(Imagem));
 
+	// if(imagem == NULL)
+	// 	return imagem;
+
 	imagem->altura = altura;
 	imagem->largura = largura;
 
-	imagem->matriz = (int**) malloc(sizeof(int*)*altura);
+	imagem->matriz = (int**) malloc(altura*(sizeof(int*)));
 
-	for(int i=0;i<largura;i++)
+	for(int i=0;i<altura;i++)
 	{
-		imagem->matriz[i] = (int*) malloc(sizeof(int)*largura);
+		imagem->matriz[i] = (int*) malloc(largura*sizeof(int));
 
-		for(int j = 0; j < altura; j++){
-
+		for(int j = 0; j < largura; j++)
+		{
 			imagem->matriz[i][j] = 0;
 		}
 	}
@@ -137,37 +140,50 @@ void reta(Imagem * imagem, Ponto2D p1, Ponto2D p2, int cor){
 
 	if(dx == 0 || dy == 0)
 	{
-	if(abs(dx)>abs(dy))
-		step = abs(dx);
-	else
-		step = abs(dy);
-	
-	xinc = dx/step;
-	yinc = dy/step;
-
-	for(int i = 1; i<=step; i++)
-	{
-		imagem->matriz[p1.x][p1.y] = cor;
-		p1.x = p1.x + xinc;
-		p1.y = p1.y + yinc;
-	}
-	}
-	else
-	{
-	p = 2*dy - dx;	
-	while(x < p2.x) {
+		if(abs(dx)>abs(dy))
+			step = abs(dx);
+		else
+			step = abs(dy);
 		
-		if(p >= 0) {
-			imagem->matriz[x][y] = cor;
-			y = y+1;
-			p = p + 2*dy - 2*dx;
-		} 
-		else {
-			imagem->matriz[x][y] = cor;
-			p = p + 2*dy;
+		xinc = dx/step;
+		yinc = dy/step;
+
+		for(int i = 1; i<=step; i++)
+		{
+			imagem->matriz[p1.y][p1.x] = cor;
+			p1.x = p1.x + xinc;
+			p1.y = p1.y + yinc;
 		}
-		x = x+1;
 	}
+	else
+	{
+		p = 2*dy - dx;	
+		while(x < p2.x) 
+		{
+			if(p >= 0) {
+				imagem->matriz[y][x] = cor;
+				y = y+1;
+				p = p + 2*dy - 2*dx;
+			} 
+			else {
+				imagem->matriz[y][x] = cor;
+				p = p + 2*dy;
+			}
+			x = x+1;
+		}
+		/*
+		while(x <= p2.x)
+		{
+			imagem->matriz[y][x] = cor;
+			x++;
+			if(p<0)
+			p = p + 2*dy;
+			else{
+				p=p+2*dy-2*dx;
+				y++;
+			}
+		}
+		*/
 	}
 
 }
@@ -203,8 +219,14 @@ void retangulo_preenchido(Imagem * imagem, Ponto2D p1, Ponto2D p2, int cor){
 
 	retangulo_contorno(imagem, p1, p2, cor);
 
+		for(int i = p1.y; i < p2.y; i++)
+		{
+			for(int j = p1.x; j < p2.x; j++)
+			{
+				imagem->matriz[i][j] = cor;
+			}
+		}
 	// percorrer a matriz entre p1, cima, baixo e p2 e preencher cada ponto
-
 
 }
 
@@ -214,10 +236,21 @@ void retangulo_preenchido(Imagem * imagem, Ponto2D p1, Ponto2D p2, int cor){
 
 void clona(Imagem * imagem, Ponto2D p1, Ponto2D p2, Ponto2D p3){
 
-	/* completar */
+	int altura = p2.y - p1.y + 1;
+	int comp = p2.x - p1.x + 1;
 
-	// percorrer a matriz entre p1, cima, baixo e p2, talvez alocar uma matriz temporaria 
-	//pra armazenar a cópia e depois transcrever a partir de p3
+	Ponto2D p4;
+	p4.y = p3.y + altura;
+	p4.x = p3.x + comp;  
+
+	for(int i = 0; i < altura; i++)
+		{
+			for(int j = 0; j < comp; j++)
+			{
+				// copia da área p1/p2 para a área p3/p4		
+				imagem->matriz[p3.y + i][p3.x + j] = imagem->matriz[p1.y + i][p1.x + j];
+			}
+		}
 }
 
 // similar a funcao acima, mas invertendo o valor dos pixels copiados para a região destino. Isto é, pixels brancos devem
@@ -225,22 +258,37 @@ void clona(Imagem * imagem, Ponto2D p1, Ponto2D p2, Ponto2D p3){
 // que somado ao valor original resulta no valor definido na constante VALOR_MAXIMO).
 
 void clona_inverte_cor(Imagem * imagem, Ponto2D p1, Ponto2D p2, Ponto2D p3){
+	
+	int altura = p2.y - p1.y + 1;
+	int comp = p2.x - p1.x + 1;
 
-	/* completar */
+	Ponto2D p4;
+	p4.y = p3.y + altura;
+	p4.x = p3.x + comp;  
+
+	clona(imagem, p1, p2, p3);
+	for(int i = p3.y; i < p4.y; i++)
+	{
+		for(int j = p3.x; j < p4.x; j++)
+		{
+			imagem->matriz[i][j] = VALOR_MAXIMO - imagem->matriz[i][j];
+		}
+	}
 }
 
 // similar a funcao 'clona', mas espelhando horizontalmente a região copiada.
 
 void clona_espelha_horizontal(Imagem * imagem, Ponto2D p1, Ponto2D p2, Ponto2D p3){
 
-	/* completar */
+	//clona(imagem, p1, p2, p3);
 }
 
 // similar a funcao 'clona', mas espelhando verticalmente a região copiada.
 
-void clona_espelha_vertical(Imagem * imagem, Ponto2D p1, Ponto2D p2, Ponto2D p3){
+void clona_espelha_vertical(Imagem * imagem, Ponto2D p1, Ponto2D p2, Ponto2D p3)
+{
 
-	/* completar */
+	//clona(imagem, p1, p2, p3);
 }
 
 
@@ -259,29 +307,49 @@ int main(){
 	scanf("%s %d %d", nome_arquivo, &largura, &altura);
 	img = cria_imagem(largura, altura);
 
-	Ponto2D p1,p2;
+	Ponto2D p1,p2,p3;
 
 	while(scanf("%s", operacao) == 1 && strcmp(operacao, FIM) != 0){
 		
-		if(strcmp(operacao,"RETA") == 0) {
-				int cor;
-				scanf("%d %d %d %d %d",&p1.x,&p1.y,&p2.x,&p2.y,&cor);
-				reta(img,p1,p2,cor);
-		} else if(strcmp(operacao,"CLONA_VER") == 0) {
-
-		} else if(strcmp(operacao,"CLONA_HOR") == 0) {
-	
-		} else if(strcmp(operacao,"RETANGULO_CONTORNO") == 0) {
-				int cor;
-				scanf("%d %d %d %d %d",&p1.x,&p1.y,&p2.x,&p2.y,&cor);
-				retangulo_contorno(img, p1, p2, cor);
-		} else if(strcmp(operacao,"RETANGULO_PREENCHIDO") == 0) {
+		if(strcmp(operacao, RETA) == 0)
+		{
+			int cor;
+			scanf("%d %d %d %d %d",&p1.x,&p1.y,&p2.x,&p2.y,&cor);
+			reta(img,p1,p2,cor);		
+		}
+		else if(strcmp(operacao, RETANGULO_CONTORNO) == 0)
+		{
+			int cor;
+			scanf("%d %d %d %d %d",&p1.x,&p1.y,&p2.x,&p2.y,&cor);
+			retangulo_contorno(img, p1, p2, cor);
+		} 
+		else if(strcmp(operacao, RETANGULO_PREENCHIDO) == 0)
+		{
 			int cor;
 			scanf("%d %d %d %d %d",&p1.x,&p1.y,&p2.x,&p2.y,&cor);
 			retangulo_preenchido(img, p1, p2, cor);
 		}
+		else if(strcmp(operacao, CLONA) == 0)
+		{
+			scanf("%d %d %d %d %d %d",&p1.x,&p1.y,&p2.x,&p2.y,&p3.x,&p3.y);
+			clona(img, p1, p2, p3);
+		}
+		else if(strcmp(operacao, CLONA_INV) == 0)
+		{
+			scanf("%d %d %d %d %d %d",&p1.x,&p1.y,&p2.x,&p2.y,&p3.x,&p3.y);
+			clona_inverte_cor(img, p1, p2, p3);
+		} 
+		else if(strcmp(operacao, CLONA_HOR) == 0)
+		{
+			scanf("%d %d %d %d %d %d",&p1.x,&p1.y,&p2.x,&p2.y,&p3.x,&p3.y);
+			clona_espelha_horizontal(img, p1, p2, p3);
+		} 
+		else if(strcmp(operacao, CLONA_VER) == 0)
+		{
+			scanf("%d %d %d %d %d %d",&p1.x,&p1.y,&p2.x,&p2.y,&p3.x,&p3.y);
+			clona_espelha_vertical(img, p1, p2, p3);
+		}
 	}
- 
 	salva(img, nome_arquivo);
 	libera_imagem(img);
 
