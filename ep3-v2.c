@@ -279,7 +279,25 @@ void clona_inverte_cor(Imagem * imagem, Ponto2D p1, Ponto2D p2, Ponto2D p3){
 // similar a funcao 'clona', mas espelhando horizontalmente a região copiada.
 
 void clona_espelha_horizontal(Imagem * imagem, Ponto2D p1, Ponto2D p2, Ponto2D p3){
+	
+	int altura = p2.y - p1.y + 1;
+	int comp = p2.x - p1.x + 1;
 
+	Ponto2D p4;
+	p4.y = p3.y + altura;
+	p4.x = p3.x + comp;  
+
+	for(int i = 0; i < altura; i++)
+		{
+			int k = 0;
+			for(int j = comp; j > 0; j--)
+			{
+				// copia da área p1/p2 para a área p3/p4 invertento horizontalmente		
+				imagem->matriz[p3.y + i][p3.x + j] = imagem->matriz[p1.y + i][p1.x + k];
+				k = k+1;
+			}
+		}
+		
 	//clona(imagem, p1, p2, p3);
 }
 
@@ -287,7 +305,23 @@ void clona_espelha_horizontal(Imagem * imagem, Ponto2D p1, Ponto2D p2, Ponto2D p
 
 void clona_espelha_vertical(Imagem * imagem, Ponto2D p1, Ponto2D p2, Ponto2D p3)
 {
+	int altura = p2.y - p1.y + 1;
+	int comp = p2.x - p1.x + 1;
 
+	Ponto2D p4;
+	p4.y = p3.y + altura;
+	p4.x = p3.x + comp; 
+	
+	int a = 0;
+	for(int i = altura; i > 0; i--)
+		{
+			for(int j = 0; j < comp; j++)
+			{
+				// copia da área p1/p2 para a área p3/p4		
+				imagem->matriz[p3.y + a][p3.x + j] = imagem->matriz[p1.y + i][p1.x + j];
+			}
+			a = a+1;
+		}
 	//clona(imagem, p1, p2, p3);
 }
 
@@ -311,7 +345,12 @@ int main(){
 
 	while(scanf("%s", operacao) == 1 && strcmp(operacao, FIM) != 0){
 		
-		if(strcmp(operacao, RETA) == 0)
+		if(strcmp(operacao, CLONA_VER) == 0)
+		{
+			scanf("%d %d %d %d %d %d",&p1.x,&p1.y,&p2.x,&p2.y,&p3.x,&p3.y);
+			clona_espelha_vertical(img, p1, p2, p3);
+		} 
+		else if(strcmp(operacao, RETA) == 0)
 		{
 			int cor;
 			scanf("%d %d %d %d %d",&p1.x,&p1.y,&p2.x,&p2.y,&cor);
@@ -322,7 +361,7 @@ int main(){
 			int cor;
 			scanf("%d %d %d %d %d",&p1.x,&p1.y,&p2.x,&p2.y,&cor);
 			retangulo_contorno(img, p1, p2, cor);
-		} 
+		}
 		else if(strcmp(operacao, RETANGULO_PREENCHIDO) == 0)
 		{
 			int cor;
@@ -344,11 +383,7 @@ int main(){
 			scanf("%d %d %d %d %d %d",&p1.x,&p1.y,&p2.x,&p2.y,&p3.x,&p3.y);
 			clona_espelha_horizontal(img, p1, p2, p3);
 		} 
-		else if(strcmp(operacao, CLONA_VER) == 0)
-		{
-			scanf("%d %d %d %d %d %d",&p1.x,&p1.y,&p2.x,&p2.y,&p3.x,&p3.y);
-			clona_espelha_vertical(img, p1, p2, p3);
-		}
+		
 	}
 	salva(img, nome_arquivo);
 	libera_imagem(img);
