@@ -128,9 +128,8 @@ void salva(Imagem * imagem, char * nomeArquivo){
  
 void reta(Imagem * imagem, Ponto2D p1, Ponto2D p2, int cor){
 
-	//Algoritmo de Bresenham
-
-	int dx, dy, p, x, y, step, xinc, yinc;
+	int x, y, step;
+	double xinc, yinc, dx, dy;
 
 	dx = p2.x - p1.x;
 	dy = p2.y - p1.y;
@@ -138,8 +137,6 @@ void reta(Imagem * imagem, Ponto2D p1, Ponto2D p2, int cor){
 	x = p1.x;
 	y = p1.y;
 
-	if(dx == 0 || dy == 0)
-	{
 		if(abs(dx)>abs(dy))
 			step = abs(dx);
 		else
@@ -148,44 +145,13 @@ void reta(Imagem * imagem, Ponto2D p1, Ponto2D p2, int cor){
 		xinc = dx/step;
 		yinc = dy/step;
 
-		for(int i = 1; i<=step; i++)
+		for(int i = 0; i<=step; i++)
 		{
-			imagem->matriz[p1.y][p1.x] = cor;
-			p1.x = p1.x + xinc;
-			p1.y = p1.y + yinc;
-		}
-	}
-	else
-	{
-		p = 2*dy - dx;	
-		while(x < p2.x) 
-		{
-			if(p >= 0) {
-				imagem->matriz[y][x] = cor;
-				y = y+1;
-				p = p + 2*dy - 2*dx;
-			} 
-			else {
-				imagem->matriz[y][x] = cor;
-				p = p + 2*dy;
-			}
-			x = x+1;
-		}
-		/*
-		while(x <= p2.x)
-		{
+			x = round(p1.x + i * xinc);
+			y = round(p1.y + i * yinc);
 			imagem->matriz[y][x] = cor;
-			x++;
-			if(p<0)
-			p = p + 2*dy;
-			else{
-				p=p+2*dy-2*dx;
-				y++;
-			}
-		}
-		*/
-	}
 
+		}
 }
 
 // desenha o contorno de um retangulo com cantos opostos em 'p1' e 'p2', na tonalidade de cinza definida em 'cor'.
@@ -239,18 +205,18 @@ void clona(Imagem * imagem, Ponto2D p1, Ponto2D p2, Ponto2D p3){
 	int altura = p2.y - p1.y + 1;
 	int comp = p2.x - p1.x + 1;
 
-	Ponto2D p4;
-	p4.y = p3.y + altura;
-	p4.x = p3.x + comp;  
+	// Ponto2D p4;
+	// p4.y = p3.y + altura;
+	// p4.x = p3.x + comp;  
 
 	for(int i = 0; i < altura; i++)
+	{
+		for(int j = 0; j < comp; j++)
 		{
-			for(int j = 0; j < comp; j++)
-			{
-				// copia da área p1/p2 para a área p3/p4		
-				imagem->matriz[p3.y + i][p3.x + j] = imagem->matriz[p1.y + i][p1.x + j];
-			}
+			// copia da área p1/p2 para a área p3/p4		
+			imagem->matriz[p3.y + i][p3.x + j] = imagem->matriz[p1.y + i][p1.x + j];
 		}
+	}
 }
 
 // similar a funcao acima, mas invertendo o valor dos pixels copiados para a região destino. Isto é, pixels brancos devem
@@ -283,22 +249,20 @@ void clona_espelha_horizontal(Imagem * imagem, Ponto2D p1, Ponto2D p2, Ponto2D p
 	int altura = p2.y - p1.y + 1;
 	int comp = p2.x - p1.x + 1;
 
-	Ponto2D p4;
-	p4.y = p3.y + altura;
-	p4.x = p3.x + comp;  
+	// Ponto2D p4;
+	// p4.y = p3.y + altura;
+	// p4.x = p3.x + comp;  
 
 	for(int i = 0; i < altura; i++)
+	{
+		int k = 0;
+		for(int j = comp; j > 0; j--)
 		{
-			int k = 0;
-			for(int j = comp; j > 0; j--)
-			{
-				// copia da área p1/p2 para a área p3/p4 invertento horizontalmente		
-				imagem->matriz[p3.y + i][p3.x + j] = imagem->matriz[p1.y + i][p1.x + k];
-				k = k+1;
-			}
+			// copia da área p1/p2 para a área p3/p4 invertendo horizontalmente		
+			imagem->matriz[p3.y + i][p3.x + j] = imagem->matriz[p1.y + i][p1.x + k];
+			k = k+1;
 		}
-		
-	//clona(imagem, p1, p2, p3);
+	}
 }
 
 // similar a funcao 'clona', mas espelhando verticalmente a região copiada.
@@ -308,9 +272,9 @@ void clona_espelha_vertical(Imagem * imagem, Ponto2D p1, Ponto2D p2, Ponto2D p3)
 	int altura = p2.y - p1.y + 1;
 	int comp = p2.x - p1.x + 1;
 
-	Ponto2D p4;
-	p4.y = p3.y + altura;
-	p4.x = p3.x + comp; 
+	// Ponto2D p4;
+	// p4.y = p3.y + altura;
+	// p4.x = p3.x + comp; 
 	
 	int a = 0;
 	for(int i = altura; i > 0; i--)
@@ -322,7 +286,6 @@ void clona_espelha_vertical(Imagem * imagem, Ponto2D p1, Ponto2D p2, Ponto2D p3)
 			}
 			a = a+1;
 		}
-	//clona(imagem, p1, p2, p3);
 }
 
 
