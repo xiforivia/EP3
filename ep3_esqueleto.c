@@ -1,7 +1,6 @@
 ////////////////////////////////////////////////////////////////
 //                                                            //
-//  JULIANA DE FARIA DUARTE RIBEIRO - Nº USP: 12684969        //
-//  KAILANI ESTEVES BARBOZA - Nº USP: 12543818                //
+// Numero USP - Nome Completo                                 //
 //                                                            //
 ////////////////////////////////////////////////////////////////
 
@@ -10,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
+
 
 // constante que define o valor maximo que um pixel pode assumir.
 
@@ -52,20 +51,14 @@ Imagem * cria_imagem(int largura, int altura){
 
 	Imagem * imagem = (Imagem *) malloc(sizeof(Imagem));
 
-	imagem->altura = altura;
-	imagem->largura = largura;
+	imagem->altura = 0;	// isto está correto?
+	imagem->largura = 0;	// e isto?
 
-	imagem->matriz = (int**) malloc(altura*(sizeof(int*)));
+	/* 
+	  Você deve completar esta função para que ela inicialize corretamente a estrutura ja alocada,
+	  incluindo a alocacao dinâmica do campo 'matriz' de acordo com a largura e altura fornecidas. 
+        */
 
-	for(int i=0;i<altura;i++)
-	{
-		imagem->matriz[i] = (int*) malloc(largura*sizeof(int));
-
-		for(int j = 0; j < largura; j++)
-		{
-			imagem->matriz[i][j] = 0;
-		}
-	}
 	return imagem;
 }
 
@@ -124,27 +117,7 @@ void salva(Imagem * imagem, char * nomeArquivo){
  
 void reta(Imagem * imagem, Ponto2D p1, Ponto2D p2, int cor){
 
-	int x, y, step;
-	double xinc, yinc, dx, dy;
-
-	dx = p2.x - p1.x;
-	dy = p2.y - p1.y;
-
-	if(abs(dx)>abs(dy))
-		step = abs(dx);
-	else
-		step = abs(dy);
-	
-	xinc = dx/step;
-	yinc = dy/step;
-
-	for(int i = 0; i<=step; i++)
-	{
-		x = round(p1.x + i * xinc);
-		y = round(p1.y + i * yinc);
-		imagem->matriz[y][x] = cor;
-
-	}
+	/* completar */
 }
 
 // desenha o contorno de um retangulo com cantos opostos em 'p1' e 'p2', na tonalidade de cinza definida em 'cor'.
@@ -152,23 +125,7 @@ void reta(Imagem * imagem, Ponto2D p1, Ponto2D p2, int cor){
 
 void retangulo_contorno(Imagem * imagem, Ponto2D p1, Ponto2D p2, int cor){
 
-	//linha de cima do retangulo (superior direito)
-	Ponto2D cima;
-	cima.y = p2.y;
-	cima.x = p1.x;
-	reta(imagem, p1, cima, cor);
-
-	//linha de baixo do retangulo (inferior esquerdo)
-	Ponto2D baixo;
-	baixo.y = p1.y;
-	baixo.x = p2.x;
-	reta(imagem, baixo, p2, cor);
-
-	//linha da esq do retangulo
-	reta(imagem, p1, baixo, cor);
-
-	//linha da dir do retangulo
-	reta(imagem, cima, p2, cor);
+	/* completar */
 }
 
 // desenha um retangulo preenchido com cantos opostos em 'p1' e 'p2', na tonalidade de cinza definida em 'cor'.
@@ -176,47 +133,7 @@ void retangulo_contorno(Imagem * imagem, Ponto2D p1, Ponto2D p2, int cor){
 
 void retangulo_preenchido(Imagem * imagem, Ponto2D p1, Ponto2D p2, int cor){
 
-	retangulo_contorno(imagem, p1, p2, cor);
-
-	if((p1.y<p2.y) && (p1.x<p2.x))
-	{
-		for(int i = p1.y; i < p2.y; i++)
-		{
-			for(int j = p1.x; j < p2.x; j++)
-			{
-				imagem->matriz[i][j] = cor;
-			}
-		}
-	}
-	else if((p1.y>p2.y) && (p1.x<p2.x)) 
-	{
-		for(int i = p1.y; i > p2.y; i--)
-		{
-			for(int j = p1.x; j < p2.x; j++)
-			{
-				imagem->matriz[i][j] = cor;
-			}
-		}
-	}
-	else if((p1.y<p2.y) && (p1.x>p2.x)) {
-		for(int i = p1.y; i < p2.y; i++)
-		{
-			for(int j = p1.x; j > p2.x; j--)
-			{
-				imagem->matriz[i][j] = cor;
-			}
-		}	
-	}
-	else 
-	{
-		for(int i = p1.y; i > p2.y; i--)
-		{
-			for(int j = p1.x; j > p2.x; j--)
-			{
-				imagem->matriz[i][j] = cor;
-			}
-		}
-	}
+	/* completar */
 }
 
 // copia o conteudo da area compreendida no retangulo delimitado pelos cantos opostos 'p1' e 'p2' para uma região destino 
@@ -225,21 +142,7 @@ void retangulo_preenchido(Imagem * imagem, Ponto2D p1, Ponto2D p2, int cor){
 
 void clona(Imagem * imagem, Ponto2D p1, Ponto2D p2, Ponto2D p3){
 
-	int altura = p2.y - p1.y + 1;
-	int comp = p2.x - p1.x + 1;
-
-	// Ponto2D p4;
-	// p4.y = p3.y + altura;
-	// p4.x = p3.x + comp;  
-
-	for(int i = 0; i < altura; i++)
-	{
-		for(int j = 0; j < comp; j++)
-		{
-			// copia da área p1/p2 para a área p3/p4		
-			imagem->matriz[p3.y + i][p3.x + j] = imagem->matriz[p1.y + i][p1.x + j];
-		}
-	}
+	/* completar */
 }
 
 // similar a funcao acima, mas invertendo o valor dos pixels copiados para a região destino. Isto é, pixels brancos devem
@@ -247,69 +150,22 @@ void clona(Imagem * imagem, Ponto2D p1, Ponto2D p2, Ponto2D p3){
 // que somado ao valor original resulta no valor definido na constante VALOR_MAXIMO).
 
 void clona_inverte_cor(Imagem * imagem, Ponto2D p1, Ponto2D p2, Ponto2D p3){
-	
-	int altura = p2.y - p1.y + 1;
-	int comp = p2.x - p1.x + 1;
 
-	Ponto2D p4;
-	p4.y = p3.y + altura;
-	p4.x = p3.x + comp;  
-
-	clona(imagem, p1, p2, p3);
-	
-	for(int i = p3.y; i < p4.y; i++)
-	{
-		for(int j = p3.x; j < p4.x; j++)
-		{
-			imagem->matriz[i][j] = VALOR_MAXIMO - imagem->matriz[i][j];
-		}
-	}
+	/* completar */
 }
 
 // similar a funcao 'clona', mas espelhando horizontalmente a região copiada.
 
 void clona_espelha_horizontal(Imagem * imagem, Ponto2D p1, Ponto2D p2, Ponto2D p3){
-	
-	int altura = p2.y - p1.y + 1;
-	int comp = p2.x - p1.x + 1;
 
-	// Ponto2D p4;
-	// p4.y = p3.y + altura;
-	// p4.x = p3.x + comp;  
-
-	for(int i = 0; i < altura; i++)
-	{
-		int k = 0;
-		for(int j = comp; j > 0; j--)
-		{
-			// copia da área p1/p2 para a área p3/p4 invertendo horizontalmente		
-			imagem->matriz[p3.y + i][p3.x + j] = imagem->matriz[p1.y + i][p1.x + k];
-			k = k+1;
-		}
-	}
+	/* completar */
 }
 
 // similar a funcao 'clona', mas espelhando verticalmente a região copiada.
 
-void clona_espelha_vertical(Imagem * imagem, Ponto2D p1, Ponto2D p2, Ponto2D p3)
-{
-	int altura = p2.y - p1.y + 1;
-	int comp = p2.x - p1.x + 1;
+void clona_espelha_vertical(Imagem * imagem, Ponto2D p1, Ponto2D p2, Ponto2D p3){
 
-	// Ponto2D p4;
-	// p4.y = p3.y + altura;
-	// p4.x = p3.x + comp; 
-	
-	int a = 0;
-	for(int i = altura; i > 0; i--)
-	{
-		for(int j = 0; j < comp; j++)
-		{
-			// copia da área p1/p2 para a área p3/p4		
-			imagem->matriz[p3.y + a][p3.x + j] = imagem->matriz[p1.y + i][p1.x + j];
-		}
-		a = a+1;
-	}
+	/* completar */
 }
 
 
@@ -328,50 +184,18 @@ int main(){
 	scanf("%s %d %d", nome_arquivo, &largura, &altura);
 	img = cria_imagem(largura, altura);
 
-	Ponto2D p1,p2,p3;
+	while(scanf("%s", operacao) == 1 && strcmp(operacao, FIM) != 0){
+	
+		/* completar */
 
-	while(scanf("%s", operacao) == 1 && strcmp(operacao, FIM) != 0)
-	{
-		if(strcmp(operacao, RETA) == 0)
-		{
-			int cor;
-			scanf("%d %d %d %d %d",&p1.x,&p1.y,&p2.x,&p2.y,&cor);
-			reta(img,p1,p2,cor);		
-		}
-		else if(strcmp(operacao, RETANGULO_CONTORNO) == 0)
-		{
-			int cor;
-			scanf("%d %d %d %d %d",&p1.x,&p1.y,&p2.x,&p2.y,&cor);
-			retangulo_contorno(img, p1, p2, cor);
-		}
-		else if(strcmp(operacao, RETANGULO_PREENCHIDO) == 0)
-		{
-			int cor;
-			scanf("%d %d %d %d %d",&p1.x,&p1.y,&p2.x,&p2.y,&cor);
-			retangulo_preenchido(img, p1, p2, cor);
-		}
-		else if(strcmp(operacao, CLONA) == 0)
-		{
-			scanf("%d %d %d %d %d %d",&p1.x,&p1.y,&p2.x,&p2.y,&p3.x,&p3.y);
-			clona(img, p1, p2, p3);
-		}
-		else if(strcmp(operacao, CLONA_INV) == 0)
-		{
-			scanf("%d %d %d %d %d %d",&p1.x,&p1.y,&p2.x,&p2.y,&p3.x,&p3.y);
-			clona_inverte_cor(img, p1, p2, p3);
-		} 
-		else if(strcmp(operacao, CLONA_HOR) == 0)
-		{
-			scanf("%d %d %d %d %d %d",&p1.x,&p1.y,&p2.x,&p2.y,&p3.x,&p3.y);
-			clona_espelha_horizontal(img, p1, p2, p3);
-		}
-		else if(strcmp(operacao, CLONA_VER) == 0)
-		{
-			scanf("%d %d %d %d %d %d",&p1.x,&p1.y,&p2.x,&p2.y,&p3.x,&p3.y);
-			clona_espelha_vertical(img, p1, p2, p3);
-		} 
-		
+		// voce deve verificar o conteudo da string 'operacao' para definir qual a operacao
+		// de desenho a ser realizada, e chamar a funcao adequada para tal. Nao se esqueca
+		// de ler os parametros adicionais esperados para a operacao a ser realizada. Caso
+		// o conteudo da string nao corresponda a nenhuma das operacoes reconhecidas (como
+		// as definidas nas constantes) voce pode simplesmente ignorar o comando na iteracao
+		// atual.
 	}
+
 	salva(img, nome_arquivo);
 	libera_imagem(img);
 
